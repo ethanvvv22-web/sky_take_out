@@ -1,3 +1,225 @@
 
 Documentation is available at http://nginx.org
 
+df = pd.read_csv("D:/data8/Corona_NLP_train.csv", encoding="latin-1")
+
+
+
+
+  解决'utf-8' codec can't decode byte 0xc2 in position 7485: invalid continuation byte 这问题
+
+
+作业4，第一问：
+
+
+
+
+
+
+
+import pandas as pd
+
+
+
+
+df = pd.read_csv("D:\\data8\\Corona_NLP_train.csv",
+                 encoding="latin-1"
+                 )
+
+
+# 2. Keep only the columns we need
+df = df[["OriginalTweet", "Sentiment"]]
+ 
+# 3. Filter out Neutral tweets
+df = df[df["Sentiment"] != "Neutral"]
+
+
+# 4. Create Y: 1 for positive, 0 for negative
+df["Y"] = df["Sentiment"].apply(
+    lambda s: 1 if s.lower() == "positive" else 0
+)
+
+
+# 5. Define X and Y
+X = df["OriginalTweet"].values
+Y = df["Y"].values
+
+
+# 6. Split the data (NOT randomly)
+N = len(X)
+
+
+train_end = int(0.60 * N)
+test_end = train_end + int(0.15 * N)
+
+
+X_train = X[:train_end]
+Y_train = Y[:train_end]
+
+
+X_test = X[train_end:test_end]
+Y_test = Y[train_end:test_end]
+
+
+X_val = X[test_end:]
+Y_val = Y[test_end:]
+
+
+
+接下来的问题：
+
+
+
+
+
+
+
+
+
+
+
+
+import numpy as np
+
+
+# 1. Predict probabilities on validation set
+proba_val = model.predict_proba(X_val)[:, 1]
+
+
+# 2. Apply optimal threshold
+pred_val = (proba_val >= optimal_threshold).astype(int)
+
+
+# 3. Compute cost C_i for each validation sample
+C = np.zeros_like(Y_val, dtype=float)
+
+
+# False Negative: true = 1, pred = 0 → cost = 1
+C[(Y_val == 1) & (pred_val == 0)] = 1.0
+
+
+# False Positive: true = 0, pred = 1 → cost = 5
+C[(Y_val == 0) & (pred_val == 1)] = 5.0
+
+
+# 4. Empirical mean cost (production cost estimate)
+cost_at_optimal_threshold_valid = C.mean()
+
+
+# 5. Hoeffding 99% confidence interval
+delta = 0.01
+n = len(C)
+a, b = 0.0, 5.0
+
+
+epsilon = (b - a) * np.sqrt(np.log(2 / delta) / (2 * n))
+
+
+cost_interval_valid = (
+    cost_at_optimal_threshold_valid - epsilon,
+    cost_at_optimal_threshold_valid + epsilon
+)
+
+
+# Required asserts
+assert type(cost_interval_valid) == tuple
+assert len(cost_interval_valid) == 2
+
+
+
+
+
+
+import math
+
+
+# 1. Empirical variance of C
+variance_of_C = C.var(ddof=0)
+
+
+# 2. Bennett inequality parameters
+delta = 0.01
+M = 5.0                  # range width (max cost)
+sigma2 = variance_of_C
+n = len(C)
+
+
+def h(u):
+    return (1 + u) * math.log(1 + u) - u
+
+
+def bennett_upper_tail(eps):
+    """
+    Upper tail bound:
+    P(mu_hat - mu >= eps)
+    """
+    if eps <= 0:
+        return 1.0
+    if sigma2 == 0:
+        return 0.0
+    u = M * eps / sigma2
+    return math.exp(-(n * sigma2 / (M ** 2)) * h(u))
+
+
+# 3. Find epsilon such that probability <= delta/2 (two-sided CI)
+target = delta / 2
+low, high = 0.0, M
+
+
+for _ in range(80):
+    mid = (low + high) / 2
+    if bennett_upper_tail(mid) > target:
+        low = mid
+    else:
+        high = mid
+
+
+epsilon_bennett = high
+
+
+interval_of_C = (
+    cost_at_optimal_threshold_valid - epsilon_bennett,
+    cost_at_optimal_threshold_valid + epsilon_bennett
+)
+
+
+# Required asserts
+assert type(interval_of_C) == tuple
+assert len(interval_of_C) == 2
+
+
+
+线性随机数生成器：
+   import numpy as np
+
+def lcg(seed, a=1664525, c=1013904223, m=2**32, n=10000):
+    x = seed
+    u = []
+    for _ in range(n):
+        x = (a * x + c) % m
+        u.append(x / m)
+    return np.array(u)
+  
+
+
+
+    第一问
+
+
+第二问
+
+
+第三问：
+  
+这题因为g(x)就是1，M就是Π/2，一般是f(x)/(M*g
+cdf：
+
+
+
+
+
+
+
+
+作业2 
+   正态分布损失函数
