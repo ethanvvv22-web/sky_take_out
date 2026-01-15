@@ -223,3 +223,78 @@ cdf：
 
 作业2 
    正态分布损失函数
+
+
+
+
+线性随机数生成器：
+       import numpy as np
+
+def lcg(seed, n=10000):
+    a=1664525, c=1013904223, m=2**32
+    x = seed
+    u = []
+    for _ in range(n):
+        x = (a * x + c) % m
+        u.append(x / m)
+    return np.array(u)
+  
+     将生成器变成在0到1之间分布的uniform分布
+if size is None:
+        raise ValueError("size must be provided")
+    if generator is None:
+        raise ValueError("You must provide a generator function (e.g. problem1_LCG)")
+
+
+    # Step 1: Generate pseudo-random integers using the provided generator
+    random_integers = generator(size, seed)
+
+
+    # Step 2: Convert to uniform [0,1) values
+    uniform_numbers = [x / float(period) for x in random_integers]
+
+
+    return uniform_numbers
+
+
+def problem4_accept_reject(uniformGenerator=None, n_iterations=None, seed=0):
+    """
+    Takes a generator that produces uniform pseudo random [0,1] numbers
+    and produces samples from (pi/2)*abs(sin(x*2*pi)) using an Accept-Reject
+    sampler with the uniform distribution as the proposal distribution.
+    Runs n_iterations
+    Parameters
+    generator : a function of the type generator(size,seed) that produces uniform pseudo random
+    numbers from [0,1]
+    seed : the seed to be used in the generator provided
+    """
+    if uniformGenerator is None:
+        raise ValueError("A uniform [0,1] generator must be provided")
+    if n_iterations is None or n_iterations <= 0:
+        return []
+    # We'll consume 2 uniforms per iteration (x,y)
+    u = uniformGenerator(size=2*n_iterations, seed=seed)
+    out = []
+    k = 0
+    for _ in range(n_iterations):
+        x = u[k]; y = u[k+1]; k += 2
+        if y < abs(math.sin(2 * math.pi * x)):
+            out.append(x)
+   
+    return out
+
+
+
+
+       以上是这题的解答，
+
+当函数是pdf时，就是u<f(x)/M*g(x) 因为题中g(x)是1，M是Π/2约分了，所以就剩下sin(2*pi*x)了，
+
+
+ 
+
+笔记网址：
+https://github.com/BlueJ1/IntroDSExamMaterial 
+https://bluej1.github.io/IntroDSExamMaterial/
+https://bluej1.github.io/IntroDSExamMaterial/
+
