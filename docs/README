@@ -298,3 +298,33 @@ https://github.com/BlueJ1/IntroDSExamMaterial
 https://bluej1.github.io/IntroDSExamMaterial/
 https://bluej1.github.io/IntroDSExamMaterial/
 
+
+
+
+
+
+马尔可夫链：
+问是否irreducible
+
+如果存在每个点都能到其他所有的点，那就是irreducible，只要有一个点到不了某个点就是reducible
+就是看有没有两条线1->2->3->4和4->3->2->1同时存在，要是两条线同时存在，就是irreducible
+
+问Is the Markov chain aperiodic? What is the period for each state?
+就看每个点到自己的每个路径的长度的最大公约数，就是到自己可能有2步，3步，那么公约数是1，要是公约数是1，那就是aperiodic，大于1就是periodic
+period就是这个公约数的值
+
+问Does the Markov chain have a stationary distribution, and if so, what is it?
+有限的举证就一定有这个分布，irreducible的是有唯一的一个，而reducible的是有多个，
+          找到一个（Π0，Π1，Π2）使得它乘以这个矩阵本身还是（Π0，Π1，Π2）
+
+问是否是reversed的
+    就是πi​Pij​=πj​Pji​  检查每一对这个，要是有任意一对不满足，那就是not reversible
+    只要两者差值小于0.001就是等于了，因为Π会可能取近似值​
+
+
+
+
+
+
+
+
